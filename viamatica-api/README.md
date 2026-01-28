@@ -1,59 +1,166 @@
-<p align="center"><a href="https://laravel.com" target="_blank"><img src="https://raw.githubusercontent.com/laravel/art/master/logo-lockup/5%20SVG/2%20CMYK/1%20Full%20Color/laravel-logolockup-cmyk-red.svg" width="400" alt="Laravel Logo"></a></p>
+# Viamatica API (Laravel)
 
-<p align="center">
-<a href="https://github.com/laravel/framework/actions"><img src="https://github.com/laravel/framework/workflows/tests/badge.svg" alt="Build Status"></a>
-<a href="https://packagist.org/packages/laravel/framework"><img src="https://img.shields.io/packagist/dt/laravel/framework" alt="Total Downloads"></a>
-<a href="https://packagist.org/packages/laravel/framework"><img src="https://img.shields.io/packagist/v/laravel/framework" alt="Latest Stable Version"></a>
-<a href="https://packagist.org/packages/laravel/framework"><img src="https://img.shields.io/packagist/l/laravel/framework" alt="License"></a>
-</p>
+API REST para gestión de películas y salas de cine, construida en Laravel con estructura por capas (Controllers, Model, Services, Repository), Swagger y colección de Postman.
 
-## About Laravel
+## Requisitos
 
-Laravel is a web application framework with expressive, elegant syntax. We believe development must be an enjoyable and creative experience to be truly fulfilling. Laravel takes the pain out of development by easing common tasks used in many web projects, such as:
+- PHP 8.2+ (recomendado por Laravel 12)
+- Composer
+- MySQL 8+
 
-- [Simple, fast routing engine](https://laravel.com/docs/routing).
-- [Powerful dependency injection container](https://laravel.com/docs/container).
-- Multiple back-ends for [session](https://laravel.com/docs/session) and [cache](https://laravel.com/docs/cache) storage.
-- Expressive, intuitive [database ORM](https://laravel.com/docs/eloquent).
-- Database agnostic [schema migrations](https://laravel.com/docs/migrations).
-- [Robust background job processing](https://laravel.com/docs/queues).
-- [Real-time event broadcasting](https://laravel.com/docs/broadcasting).
+## Instalación
 
-Laravel is accessible, powerful, and provides tools required for large, robust applications.
+1) Clona el repositorio y entra al proyecto:
 
-## Learning Laravel
+```bash
+cd viamatica-api
+```
 
-Laravel has the most extensive and thorough [documentation](https://laravel.com/docs) and video tutorial library of all modern web application frameworks, making it a breeze to get started with the framework. You can also check out [Laravel Learn](https://laravel.com/learn), where you will be guided through building a modern Laravel application.
+2) Instala dependencias:
 
-If you don't feel like reading, [Laracasts](https://laracasts.com) can help. Laracasts contains thousands of video tutorials on a range of topics including Laravel, modern PHP, unit testing, and JavaScript. Boost your skills by digging into our comprehensive video library.
+```bash
+composer install
+```
 
-## Laravel Sponsors
+3) Configura el entorno `.env` (ya creado). Asegúrate de que los datos de MySQL estén correctos:
 
-We would like to extend our thanks to the following sponsors for funding Laravel development. If you are interested in becoming a sponsor, please visit the [Laravel Partners program](https://partners.laravel.com).
+```dotenv
+DB_CONNECTION=mysql
+DB_HOST=localhost
+DB_PORT=3306
+DB_DATABASE=viamatica_api
+DB_USERNAME=root
+DB_PASSWORD=e0tki12j
+```
 
-### Premium Partners
+4) Crea la base de datos en MySQL:
 
-- **[Vehikl](https://vehikl.com)**
-- **[Tighten Co.](https://tighten.co)**
-- **[Kirschbaum Development Group](https://kirschbaumdevelopment.com)**
-- **[64 Robots](https://64robots.com)**
-- **[Curotec](https://www.curotec.com/services/technologies/laravel)**
-- **[DevSquad](https://devsquad.com/hire-laravel-developers)**
-- **[Redberry](https://redberry.international/laravel-development)**
-- **[Active Logic](https://activelogic.com)**
+```sql
+CREATE DATABASE viamatica_api;
+```
 
-## Contributing
+## Migraciones (incluye stored procedure)
 
-Thank you for considering contributing to the Laravel framework! The contribution guide can be found in the [Laravel documentation](https://laravel.com/docs/contributions).
+Ejecuta las migraciones para crear tablas y el procedimiento almacenado:
 
-## Code of Conduct
+```bash
+php artisan migrate
+```
 
-In order to ensure that the Laravel community is welcoming to all, please review and abide by the [Code of Conduct](https://laravel.com/docs/contributions#code-of-conduct).
+Esto crea:
+- `pelicula`
+- `sala_cine`
+- `pelicula_salacine`
+- Stored procedure `sp_contar_peliculas_sala` (requisito de la prueba)
 
-## Security Vulnerabilities
+## Swagger (documentación)
 
-If you discover a security vulnerability within Laravel, please send an e-mail to Taylor Otwell via [taylor@laravel.com](mailto:taylor@laravel.com). All security vulnerabilities will be promptly addressed.
+Se usa `darkaonline/l5-swagger`.
 
-## License
+1) Genera la documentación:
 
-The Laravel framework is open-sourced software licensed under the [MIT license](https://opensource.org/licenses/MIT).
+```bash
+php artisan l5-swagger:generate
+```
+
+2) Accede a Swagger UI:
+
+```
+http://localhost:8000/api/documentation
+```
+
+## Ejecutar el servidor
+
+```bash
+php artisan serve
+```
+
+Por defecto:
+```
+http://localhost:8000
+```
+
+## Estructura del proyecto
+
+```
+app/
+  Controllers/   -> Endpoints
+  Model/         -> Modelos y DTOs
+    DTOs/
+  Services/      -> Lógica de negocio
+  Repository/    -> Acceso a datos / DB
+```
+
+## Endpoints
+
+Base URL: `http://localhost:8000`
+
+### Películas
+
+- **Listar películas**
+  - `GET /api/peliculas`
+
+- **Obtener película por ID**
+  - `GET /api/peliculas/{id}`
+
+- **Crear película**
+  - `POST /api/peliculas`
+  - Body JSON:
+    ```json
+    {
+      "nombre": "Matrix",
+      "duracion": 136
+    }
+    ```
+
+- **Actualizar película**
+  - `PUT /api/peliculas/{id}`
+  - Body JSON:
+    ```json
+    {
+      "nombre": "Matrix Reloaded",
+      "duracion": 138
+    }
+    ```
+
+- **Eliminar película (soft delete)**
+  - `DELETE /api/peliculas/{id}`
+
+- **Buscar película por nombre**
+  - `GET /api/peliculas/buscar/nombre?nombre=Matrix`
+
+- **Buscar películas por fecha de publicación**
+  - `GET /api/peliculas/buscar/fecha-publicacion?fecha_publicacion=YYYY-MM-DD`
+  - Validación: formato `Y-m-d`
+
+### Salas
+
+- **Disponibilidad por nombre de sala**
+  - `GET /api/salas/disponibilidad?nombre=Sala 1`
+
+Reglas de negocio:
+- Si la sala tiene **menos de 3 películas** → “Sala disponible”
+- Si tiene **entre 3 y 5** → “Sala con [n] películas asignadas”
+- Si tiene **más de 5** → “Sala no disponible”
+
+## Postman
+
+La colección está en el proyecto:
+
+```
+postman_collection.json
+```
+
+Importa el archivo en Postman y asegúrate de que `baseUrl` apunte a `http://localhost:8000`.
+
+## Notas
+
+- Se usan **soft deletes** en las entidades (eliminaciones lógicas).
+- ORM: Eloquent.
+- Stored procedure usado en la lógica de disponibilidad de salas.
+
+## Scripts útiles
+
+- Migrar: `php artisan migrate`
+- Generar Swagger: `php artisan l5-swagger:generate`
+- Servir app: `php artisan serve`
