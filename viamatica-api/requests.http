@@ -1,0 +1,37 @@
+@baseUrl = http://localhost:8000
+
+### Listar peliculas
+GET {{baseUrl}}/api/peliculas
+
+### Obtener pelicula por ID
+GET {{baseUrl}}/api/peliculas/1
+
+### Crear pelicula
+POST {{baseUrl}}/api/peliculas
+Content-Type: application/json
+
+{
+  "nombre": "Matrix",
+  "duracion": 136
+}
+
+### Actualizar pelicula
+PUT {{baseUrl}}/api/peliculas/1
+Content-Type: application/json
+
+{
+  "nombre": "Matrix Reloaded",
+  "duracion": 138
+}
+
+### Eliminar pelicula (soft delete)
+DELETE {{baseUrl}}/api/peliculas/1
+
+### Buscar pelicula por nombre
+GET {{baseUrl}}/api/peliculas/buscar/nombre?nombre=Matrix
+
+### Buscar pelicula por fecha_publicacion
+GET {{baseUrl}}/api/peliculas/buscar/fecha-publicacion?fecha_publicacion=2026-01-12
+
+### Disponibilidad por nombre de sala
+GET {{baseUrl}}/api/salas/disponibilidad?nombre=Sala%201

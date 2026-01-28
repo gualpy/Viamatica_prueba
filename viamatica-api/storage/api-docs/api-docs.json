@@ -1,0 +1,245 @@
+{
+    "openapi": "3.0.0",
+    "info": {
+        "title": "Viamatica API",
+        "description": "API REST para gestión de películas y salas de cine",
+        "version": "1.0.0"
+    },
+    "paths": {
+        "/api/peliculas": {
+            "get": {
+                "tags": [
+                    "Peliculas"
+                ],
+                "summary": "Listar películas",
+                "operationId": "52440f6719a1f4367ae82873bf92b21e",
+                "responses": {
+                    "200": {
+                        "description": "OK"
+                    }
+                }
+            },
+            "post": {
+                "tags": [
+                    "Peliculas"
+                ],
+                "summary": "Crear película",
+                "operationId": "067113fe01ed64df3403663788acb383",
+                "requestBody": {
+                    "required": true,
+                    "content": {
+                        "application/json": {
+                            "schema": {
+                                "required": [
+                                    "nombre",
+                                    "duracion"
+                                ],
+                                "properties": {
+                                    "nombre": {
+                                        "type": "string"
+                                    },
+                                    "duracion": {
+                                        "type": "integer"
+                                    }
+                                },
+                                "type": "object"
+                            }
+                        }
+                    }
+                },
+                "responses": {
+                    "201": {
+                        "description": "Creado"
+                    },
+                    "422": {
+                        "description": "Validación"
+                    }
+                }
+            }
+        },
+        "/api/peliculas/{id}": {
+            "get": {
+                "tags": [
+                    "Peliculas"
+                ],
+                "summary": "Obtener película por ID",
+                "operationId": "ae2dca1f758370a3b20242044445b094",
+                "parameters": [
+                    {
+                        "name": "id",
+                        "in": "path",
+                        "required": true,
+                        "schema": {
+                            "type": "integer"
+                        }
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "description": "OK"
+                    },
+                    "404": {
+                        "description": "No encontrado"
+                    }
+                }
+            },
+            "put": {
+                "tags": [
+                    "Peliculas"
+                ],
+                "summary": "Actualizar película",
+                "operationId": "8d3da5a625d0b082ffc0aa229b1d6085",
+                "parameters": [
+                    {
+                        "name": "id",
+                        "in": "path",
+                        "required": true,
+                        "schema": {
+                            "type": "integer"
+                        }
+                    }
+                ],
+                "requestBody": {
+                    "required": true,
+                    "content": {
+                        "application/json": {
+                            "schema": {
+                                "properties": {
+                                    "nombre": {
+                                        "type": "string"
+                                    },
+                                    "duracion": {
+                                        "type": "integer"
+                                    }
+                                },
+                                "type": "object"
+                            }
+                        }
+                    }
+                },
+                "responses": {
+                    "200": {
+                        "description": "OK"
+                    },
+                    "404": {
+                        "description": "No encontrado"
+                    }
+                }
+            },
+            "delete": {
+                "tags": [
+                    "Peliculas"
+                ],
+                "summary": "Eliminar película (soft delete)",
+                "operationId": "be1d198d537b178dda955635fca2610f",
+                "parameters": [
+                    {
+                        "name": "id",
+                        "in": "path",
+                        "required": true,
+                        "schema": {
+                            "type": "integer"
+                        }
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "description": "OK"
+                    },
+                    "404": {
+                        "description": "No encontrado"
+                    }
+                }
+            }
+        },
+        "/api/peliculas/buscar/nombre": {
+            "get": {
+                "tags": [
+                    "Peliculas"
+                ],
+                "summary": "Buscar películas por nombre",
+                "operationId": "cac504719444a1e3d92e15ee772fdde8",
+                "parameters": [
+                    {
+                        "name": "nombre",
+                        "in": "query",
+                        "required": true,
+                        "schema": {
+                            "type": "string"
+                        }
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "description": "OK"
+                    }
+                }
+            }
+        },
+        "/api/peliculas/buscar/fecha-publicacion": {
+            "get": {
+                "tags": [
+                    "Peliculas"
+                ],
+                "summary": "Buscar películas por fecha de publicación",
+                "operationId": "67fff55502737bf6d5a49f7c52b0598d",
+                "parameters": [
+                    {
+                        "name": "fecha_publicacion",
+                        "in": "query",
+                        "required": true,
+                        "schema": {
+                            "type": "string",
+                            "format": "date"
+                        }
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "description": "OK"
+                    },
+                    "422": {
+                        "description": "Validación"
+                    }
+                }
+            }
+        },
+        "/api/salas/disponibilidad": {
+            "get": {
+                "tags": [
+                    "Salas"
+                ],
+                "summary": "Disponibilidad por nombre de sala",
+                "operationId": "a1d620dcba40d56728d04e3f8c9d15c9",
+                "parameters": [
+                    {
+                        "name": "nombre",
+                        "in": "query",
+                        "required": true,
+                        "schema": {
+                            "type": "string"
+                        }
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "description": "OK"
+                    },
+                    "422": {
+                        "description": "Validación"
+                    }
+                }
+            }
+        }
+    },
+    "tags": [
+        {
+            "name": "Peliculas",
+            "description": "Peliculas"
+        },
+        {
+            "name": "Salas",
+            "description": "Salas"
+        }
+    ]
+}
