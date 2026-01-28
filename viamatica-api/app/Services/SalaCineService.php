@@ -2,7 +2,7 @@
 
 namespace App\Services;
 
-use App\DTOs\SalaDisponibilidadDTO;
+use App\Model\DTOs\SalaDisponibilidadDTO;
 use App\Repository\SalaCineRepository;
 use Illuminate\Support\Collection;
 
