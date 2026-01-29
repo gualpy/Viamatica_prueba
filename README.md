@@ -30,7 +30,7 @@ DB_HOST=localhost
 DB_PORT=3306
 DB_DATABASE=viamatica_api
 DB_USERNAME=root
-DB_PASSWORD=e0tki12j
+DB_PASSWORD=
 ```
 
 4) Crea la base de datos en MySQL:
