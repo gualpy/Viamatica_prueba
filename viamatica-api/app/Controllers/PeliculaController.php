@@ -3,8 +3,7 @@
 namespace App\Controllers;
 
 use App\Services\PeliculaService;
-use Illuminate\Http\JsonResponse;
-use Illuminate\Http\Request;
+use Illuminate\Http\{JsonResponse, Request};
 use OpenApi\Annotations as OA;
 
 class PeliculaController
