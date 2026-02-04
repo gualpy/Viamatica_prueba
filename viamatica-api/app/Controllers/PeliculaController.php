@@ -4,14 +4,14 @@ namespace App\Controllers;
 
 use App\Services\PeliculaService;
 use Illuminate\Http\{JsonResponse, Request};
+use App\Helpers\{Respuesta, Mensajes};
 use OpenApi\Annotations as OA;
 
 class PeliculaController
 {
     public function __construct(
         private PeliculaService $peliculaService
-    ) {
-    }
+    ) {}
 
     /**
      * @OA\Get(
@@ -23,7 +23,19 @@ class PeliculaController
      */
     public function index(): JsonResponse
     {
-        return response()->json($this->peliculaService->listar());
+        try {
+            Respuesta::$codRespuesta = '200';
+            Respuesta::$mensaje = Mensajes::$registroExitoso;
+            Respuesta::$data = $this->peliculaService->listar();
+            return Respuesta::retornarRespuesta();
+            //return response()->json($this->peliculaService->listar());
+        } catch (\Exception $e) {
+            Respuesta::$codRespuesta = '500';
+            return response()->json([
+                'error' => 'Error al listar las películas',
+                'message' => $e->getMessage()
+            ], 500);
+        }
     }
 
     /**
@@ -38,7 +50,19 @@ class PeliculaController
      */
     public function show(int $id): JsonResponse
     {
-        return response()->json($this->peliculaService->obtener($id));
+        try {
+            Respuesta::$codRespuesta = '200';
+            Respuesta::$mensaje = Mensajes::$listado;
+            Respuesta::$data = $this->peliculaService->obtener($id);
+            return Respuesta::retornarRespuesta();
+            //return response()->json($this->peliculaService->obtener($id));
+        } catch (\Exception $e) {
+            Respuesta::$codRespuesta = '500';
+            return response()->json([
+                'error' => 'Error al obtener la película',
+                'message' => $e->getMessage()
+            ], 500);
+        }
     }
 
     /**
@@ -60,14 +84,25 @@ class PeliculaController
      */
     public function store(Request $request): JsonResponse
     {
-        $data = $request->validate([
-            'nombre' => ['required', 'string', 'max:255'],
-            'duracion' => ['required', 'integer', 'min:1'],
-        ]);
-
-        $pelicula = $this->peliculaService->crear($data);
-
-        return response()->json($pelicula, 201);
+        //dd("hola");
+        try {
+            $data = $request->validate([
+                'nombre' => ['required', 'string', 'max:255'],
+                'duracion' => ['required', 'integer', 'min:1'],
+            ]);
+            $pelicula = $this->peliculaService->crear($data);
+            Respuesta::$codRespuesta = '201';
+            Respuesta::$mensaje = Mensajes::$creacionExitosa;
+            Respuesta::$data = $pelicula;
+            return Respuesta::retornarRespuesta();
+            //return response()->json($pelicula, 201);
+        } catch (\Exception $e) {
+            //Respuesta::$codRespuesta = '500';
+            return response()->json([
+                'error' => 'Error al crear la película',
+                'message' => $e->getMessage()
+            ], 500);
+        }
     }
 
     /**
@@ -89,15 +124,26 @@ class PeliculaController
      */
     public function update(Request $request, int $id): JsonResponse
     {
-        $data = $request->validate([
-            'nombre' => ['sometimes', 'required', 'string', 'max:255'],
-            'duracion' => ['sometimes', 'required', 'integer', 'min:1'],
-        ]);
+        try {
+            $data = $request->validate([
+                'nombre' => ['sometimes', 'required', 'string', 'max:255'],
+                'duracion' => ['sometimes', 'required', 'integer', 'min:1'],
+            ]);
 
-        $pelicula = $this->peliculaService->obtener($id);
-        $pelicula = $this->peliculaService->actualizar($pelicula, $data);
-
-        return response()->json($pelicula);
+            $pelicula = $this->peliculaService->obtenerModelo($id);
+            $pelicula = $this->peliculaService->actualizar($pelicula, $data);
+            Respuesta::$codRespuesta = '200';
+            Respuesta::$mensaje = Mensajes::$ActualizacionExitosa;
+            Respuesta::$data = $pelicula;
+            return Respuesta::retornarRespuesta();
+            //return response()->json($pelicula);
+        } catch (\Exception $e) {
+            Respuesta::$codRespuesta = '500';
+            return response()->json([
+                'error' => 'Error al actualizar la película',
+                'message' => $e->getMessage()
+            ], 500);
+        }
     }
 
     /**
@@ -112,10 +158,20 @@ class PeliculaController
      */
     public function destroy(int $id): JsonResponse
     {
-        $pelicula = $this->peliculaService->obtener($id);
-        $this->peliculaService->eliminar($pelicula);
-
-        return response()->json(['message' => 'Película eliminada']);
+        try {
+            $pelicula = $this->peliculaService->obtenerModelo($id);
+            $this->peliculaService->eliminar($pelicula);
+            Respuesta::$codRespuesta = '200';
+            Respuesta::$mensaje = Mensajes::$EliminacionExitosa;
+            //return response()->json(['message' => 'Película eliminada correctamente']);
+            return Respuesta::retornarRespuesta();
+        } catch (\Exception $e) {
+            Respuesta::$codRespuesta = '500';
+            return response()->json([
+                'error' => 'Error al eliminar la película',
+                'message' => $e->getMessage()
+            ], 500);
+        }
     }
 
     /**
@@ -129,11 +185,23 @@ class PeliculaController
      */
     public function buscarPorNombre(Request $request): JsonResponse
     {
-        $data = $request->validate([
-            'nombre' => ['required', 'string', 'max:255'],
-        ]);
+        try {
 
-        return response()->json($this->peliculaService->buscarPorNombre($data['nombre']));
+            $data = $request->validate([
+                'nombre' => ['required', 'string', 'max:255'],
+            ]);
+            Respuesta::$codRespuesta = '200';
+            Respuesta::$mensaje = Mensajes::$registroExitoso;
+            Respuesta::$data = $this->peliculaService->buscarPorNombre($data['nombre']);
+            return Respuesta::retornarRespuesta();
+            //return response()->json($this->peliculaService->buscarPorNombre($data['nombre']));
+        } catch (\Exception $e) {
+            Respuesta::$codRespuesta = '500';
+            return response()->json([
+                'error' => 'Error al buscar películas por nombre',
+                'message' => $e->getMessage()
+            ], 500);
+        }
     }
 
     /**
@@ -148,10 +216,20 @@ class PeliculaController
      */
     public function buscarPorFechaPublicacion(Request $request): JsonResponse
     {
-        $data = $request->validate([
-            'fecha_publicacion' => ['required', 'date_format:Y-m-d'],
-        ]);
-
-        return response()->json($this->peliculaService->buscarPorFechaPublicacion($data['fecha_publicacion']));
+        try {
+            Respuesta::$codRespuesta = '200';
+            Respuesta::$mensaje = Mensajes::$registroExitoso;
+            $data = $request->validate([
+                'fecha_publicacion' => ['required', 'date'],
+            ]);
+            return response()->json($this->peliculaService->buscarPorFechaPublicacion($data['fecha_publicacion']));
+        } catch (\Exception $e) {
+            Respuesta::$codRespuesta = '500';
+            return response()->json([
+                'error' => 'Error al buscar películas por fecha de publicación',
+                'message' => $e->getMessage()
+            ], 500);
+            return Respuesta::retornarRespuesta();
+        }
     }
 }
